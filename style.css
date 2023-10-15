@@ -1,0 +1,81 @@
+*{
+  margin:0px;
+  padding:0px;
+  font-family: Arial, Helvetica, sans-serif
+}
+
+body{
+  display:flex;
+  justify-content: center;
+}
+#game{
+  display:flex;
+  width:800px;
+  height:800px;
+  flex-direction: column;
+  top:10%;
+}
+
+#banner{
+  width:100%;
+  height:100px;
+  background-color: pink;
+  border-radius: 40px 40px 0px 0px;
+
+}
+
+#main{
+  height:600px;
+  background-color: rgba(0, 0, 0, 0.9);
+  border-radius: 0px 0px 40px 40px;
+}
+
+#main.active {
+  background-image: url('./game-background.png');
+  background-size:cover;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+#player-form{
+  margin:20px;
+}
+
+#player-form > * {
+  font-size:20px;
+  padding:5px;
+}
+
+#control-panel > * {
+  color:white;
+  font-size: 25px;
+  margin-left: 20px;
+}
+
+#score-board{
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:end;
+  justify-content:space-evenly;
+}
+
+.player {
+  width:130px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 30px;
+  color:white;
+}
+
+.player.active{
+  color:blue;
+}
+
+#pause-game{
+  display:none;
+}
+
+#switch-player, #score-point{
+  color:rgba(255, 255, 255, 0.3);
+}
