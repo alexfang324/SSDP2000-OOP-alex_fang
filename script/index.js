@@ -10,9 +10,10 @@ const game = {
   scoreBoard: null
 };
 
+game.scoreBoard = document.getElementById('score-board');
+
 const mainElement = document.getElementById('main');
 const addPlayerBtn = document.getElementById('add-player-button');
-game.scoreBoard = document.getElementById('score-board');
 const starGameElement = document.getElementById('start-game');
 const pauseGameElement = document.getElementById('pause-game');
 const switchPlayerElement = document.getElementById('switch-player');
@@ -23,12 +24,7 @@ addPlayerBtn.addEventListener('click', () => {
     const inputElement = document.getElementById('name-input');
     const name = inputElement.value;
     inputElement.value = '';
-
-    const playerElement = document.createElement('div');
-    playerElement.classList.add('player');
-    playerElement.innerHTML = `<p class="name">${name}</p><p class="score">0</p>`;
-    game.scoreBoard.appendChild(playerElement);
-    game.players.push(new Player(name, playerElement));
+    new Player(name, addPlayerToGame);
   }
 });
 
@@ -79,6 +75,20 @@ switchPlayerElement.addEventListener('click', () => {
 
 scorePointElement.addEventListener('click', () => {
   if (scorePointElement.classList.contains('active')) {
-    game.activePlayer.scorePoint();
+    game.activePlayer.scorePoint(updateScoreBoard);
   }
 });
+
+const addPlayerToGame = (player) => {
+  game.scoreBoard.appendChild(player.getElement());
+  game.players.push(player);
+};
+
+const updateScoreBoard = (player) => {
+  for (const p of game.scoreBoard.children) {
+    if (p.children[0].innerHTML == player.getName()) {
+      p.children[1].innerHTML = player.getScore();
+      break;
+    }
+  }
+};
