@@ -8,7 +8,6 @@ export default class Player {
     playerElement.classList.add('player');
     playerElement.innerHTML = `<p class="name">${this._name}</p><p class="score">${this._score}</p>`;
     this._element = playerElement;
-    addPlayerToGame(this);
   }
 
   scorePoint = (updateScoreBoard) => {

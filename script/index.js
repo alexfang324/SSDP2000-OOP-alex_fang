@@ -7,7 +7,11 @@ const game = {
   players: [],
   curIndex: 0,
   activePlayer: null,
-  scoreBoard: null
+  scoreBoard: null,
+  addPlayerToGame: function (player){
+    this.scoreBoard.appendChild(player.getElement());
+    this.players.push(player);
+  }
 };
 
 game.scoreBoard = document.getElementById('score-board');
@@ -24,7 +28,7 @@ addPlayerBtn.addEventListener('click', () => {
     const inputElement = document.getElementById('name-input');
     const name = inputElement.value;
     inputElement.value = '';
-    new Player(name, addPlayerToGame);
+    game.addPlayerToGame(new Player(name));
   }
 });
 
@@ -51,7 +55,7 @@ pauseGameElement.addEventListener('click', () => {
   pauseGameElement.style.display = 'none';
   starGameElement.style.display = 'block';
   mainElement.classList.remove('active');
-  game.isRunning = false;
+  // game.isRunning = false;
   switchPlayerElement.classList.remove('active');
   switchPlayerElement.style.color = 'rgba(255, 255, 255, 0.3)';
   scorePointElement.classList.remove('active');
@@ -79,10 +83,6 @@ scorePointElement.addEventListener('click', () => {
   }
 });
 
-const addPlayerToGame = (player) => {
-  game.scoreBoard.appendChild(player.getElement());
-  game.players.push(player);
-};
 
 const updateScoreBoard = (player) => {
   for (const p of game.scoreBoard.children) {
