@@ -1,5 +1,37 @@
 'use strict';
-import Player from './player.js';
+class Player {
+  constructor(name, id, updateScoreBoard) {
+    this._name = name;
+    this._id = id //array position in the game.players array
+    this._score = 0;
+    const playerElement = document.createElement('div');
+    playerElement.classList.add('player');
+    playerElement.innerHTML = `<p class="name">${this._name}</p><p class="score">${this._score}</p>`;
+    this._element = playerElement;
+  }
+
+  scorePoint = (updateScoreBoard) => {
+    this._score += 1;
+    updateScoreBoard(this);
+  };
+
+  getElement = () => {
+    return this._element;
+  };
+
+  getName = () => {
+    return this._name;
+  };
+
+  getId = ()=>{
+    return this._id;
+  }
+
+  getScore = () => {
+    return this._score;
+  };
+}
+
 
 const game = {
   titile: 'Pink Point Scoring Game',
@@ -7,88 +39,79 @@ const game = {
   players: [],
   curIndex: 0,
   activePlayer: null,
-  scoreBoard: null,
-  addPlayerToGame: function (player){
-    this.scoreBoard.appendChild(player.getElement());
-    this.players.push(player);
-  }
-};
+  mainElement: document.getElementById('main'),
+  addPlayerBtn: document.getElementById('add-player-button'),
+  starGameElement: document.getElementById('start-game'),
+  pauseGameElement: document.getElementById('pause-game'),
+  switchPlayerElement: document.getElementById('switch-player'),
+  scorePointElement: document.getElementById('score-point'),
+  scoreBoard: document.getElementById('score-board'),
+  addPlayerToGame: function (){
+    //allow add player while the Start Game button is still on display
+    if (game.starGameElement.innerHTML=='Start Game') {
 
-game.scoreBoard = document.getElementById('score-board');
+      //only add the player if the name exist and not empty spaces
+      const inputElement = document.getElementById('name-input');
+      const name = inputElement.value.trim();
+      if (name){
+        inputElement.value = '';
+        const player = new Player(name, game.players.length, game.updateScoreBoard)
+        game.scoreBoard.appendChild(player.getElement());
+        game.players.push(player);
+      }
 
-const mainElement = document.getElementById('main');
-const addPlayerBtn = document.getElementById('add-player-button');
-const starGameElement = document.getElementById('start-game');
-const pauseGameElement = document.getElementById('pause-game');
-const switchPlayerElement = document.getElementById('switch-player');
-const scorePointElement = document.getElementById('score-point');
-
-addPlayerBtn.addEventListener('click', () => {
-  if (!game.isRunning) {
-    const inputElement = document.getElementById('name-input');
-    const name = inputElement.value;
-    inputElement.value = '';
-    game.addPlayerToGame(new Player(name));
-  }
-});
-
-starGameElement.addEventListener('click', () => {
-  if (game.players.length) {
-    starGameElement.style.display = 'none';
-    starGameElement.innerHTML = 'Resume';
-    mainElement.classList.add('active');
-    pauseGameElement.style.display = 'block';
-    game.isRunning = true;
-
-    switchPlayerElement.style.color = 'white';
-    switchPlayerElement.classList.add('active');
-    scorePointElement.style.color = 'white';
-    scorePointElement.classList.add('active');
-
-    game.activePlayer = game.players[0];
-    const curPlayerElement = game.activePlayer.getElement();
-    curPlayerElement.classList.add('active');
-  }
-});
-
-pauseGameElement.addEventListener('click', () => {
-  pauseGameElement.style.display = 'none';
-  starGameElement.style.display = 'block';
-  mainElement.classList.remove('active');
-  // game.isRunning = false;
-  switchPlayerElement.classList.remove('active');
-  switchPlayerElement.style.color = 'rgba(255, 255, 255, 0.3)';
-  scorePointElement.classList.remove('active');
-  scorePointElement.style.color = 'rgba(255, 255, 255, 0.3)';
-});
-
-switchPlayerElement.addEventListener('click', () => {
-  if (switchPlayerElement.classList.contains('active')) {
-    const activePlayerInd = game.players.indexOf(game.activePlayer);
-    const newInd = (activePlayerInd + 1) % game.players.length;
-    game.activePlayer = game.players[newInd];
-    const playerElements = document.querySelectorAll('.player');
-    for (const playerElement of playerElements) {
-      playerElement.classList.remove('active');
     }
+  },
+  startGame: function(){
+    //toggle on all the gaming buttons if there is at least one player
+    if (game.players.length) {
+      game.toggleRunning();
+      //set first player as active player and turn on colored highlight on the board element
+      game.activePlayer = game.players[0];
+      game.activePlayer.getElement().classList.toggle('active')
+    }
+  },
+  
+  //update point for the player in the scoreBoard element
+  updateScoreBoard: function (player){ 
+    player.getElement().children[1].innerHTML = player.getScore();
+  },
 
-    const curPlayerElement = game.activePlayer.getElement();
-    curPlayerElement.classList.add('active');
-  }
-});
+  switchPlayer: function(){
+    if (game.isRunning) {
+      //turn colored highlight off for current player on the board element
+      game.activePlayer.getElement().classList.toggle('active')
 
-scorePointElement.addEventListener('click', () => {
-  if (scorePointElement.classList.contains('active')) {
-    game.activePlayer.scorePoint(updateScoreBoard);
-  }
-});
+      //calculate new array index of the new active player
+      const newInd = (game.activePlayer.getId() + 1) % game.players.length;
+      
+      //set the new active player and turn on its colored highlight on the board element
+      game.activePlayer = game.players[newInd];
+      game.activePlayer.getElement().classList.toggle('active');
+    } 
+  },
 
+  //toggle game state and button click-ability
+  toggleRunning: function(){
+    game.isRunning = !game.isRunning;
+    game.starGameElement.innerHTML = game.isRunning? 'Pause':'Resume';
+    game.mainElement.classList.toggle('active');
+    game.switchPlayerElement.classList.toggle('active');
+    game.scorePointElement.classList.toggle('active');
+  },
 
-const updateScoreBoard = (player) => {
-  for (const p of game.scoreBoard.children) {
-    if (p.children[0].innerHTML == player.getName()) {
-      p.children[1].innerHTML = player.getScore();
-      break;
+  scorePoint: function(){
+    if (game.isRunning) {
+      game.activePlayer.scorePoint(game.updateScoreBoard);
     }
   }
+    
 };
+
+//Adding event listener for each button
+game.addPlayerBtn.addEventListener('click', game.addPlayerToGame);
+game.starGameElement.addEventListener('click', game.startGame);
+game.pauseGameElement.addEventListener('click', game.toggleRunning);
+game.switchPlayerElement.addEventListener('click', game.switchPlayer);
+game.scorePointElement.addEventListener('click', game.scorePoint);
+

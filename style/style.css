@@ -31,7 +31,7 @@ body{
 }
 
 #main.active {
-  background-image: url('./game-background.png');
+  background-image: url('../img/game-background.png');
   background-size:cover;
   background-repeat: no-repeat;
   background-position: center;
@@ -72,10 +72,27 @@ body{
   color:blue;
 }
 
+#start-game{
+  display:none;
+}
+
+#start-game.active{
+  display:block;
+}
+
 #pause-game{
   display:none;
 }
 
+#pause-game.active{
+  display:block;
+}
+
+
 #switch-player, #score-point{
   color:rgba(255, 255, 255, 0.3);
+}
+
+#switch-player.active, #score-point.active{
+  color:white;
 }
